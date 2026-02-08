@@ -11,6 +11,15 @@ export type ProjectMember = User & {
     };
 };
 
+export type Label = {
+    id: number;
+    name: string;
+    color: string;
+    project_id: number;
+    created_at: string;
+    updated_at: string;
+};
+
 export type Project = {
     id: number;
     name: string;
@@ -23,6 +32,7 @@ export type Project = {
     owner?: User;
     members?: ProjectMember[];
     tasks?: Task[];
+    labels?: Label[];
     tasks_count?: number;
     completed_tasks_count?: number;
 };
@@ -38,6 +48,7 @@ export type Task = {
     creator_id: number;
     due_date: string | null;
     position: number;
+    parent_task_id: number | null;
     created_at: string;
     updated_at: string;
     project?: Project;
@@ -45,8 +56,12 @@ export type Task = {
     creator?: User;
     comments?: Comment[];
     attachments?: Attachment[];
+    subtasks?: Task[];
+    labels?: Label[];
     comments_count?: number;
     attachments_count?: number;
+    subtasks_count?: number;
+    completed_subtasks_count?: number;
 };
 
 export type Comment = {
@@ -83,4 +98,19 @@ export type Attachment = {
     created_at: string;
     updated_at: string;
     user?: User;
+};
+
+export type AppNotification = {
+    id: string;
+    type: string;
+    data: {
+        task_id: number;
+        task_title: string;
+        project_id: number;
+        project_name: string;
+        message: string;
+        commenter_name?: string;
+    };
+    read_at: string | null;
+    created_at: string;
 };

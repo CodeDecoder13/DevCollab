@@ -1,12 +1,14 @@
 <script setup lang="ts">
 import { usePage } from '@inertiajs/vue3';
-import { watch } from 'vue';
+import { ref, watch } from 'vue';
 import { toast } from 'vue-sonner';
 import AppContent from '@/components/AppContent.vue';
 import AppShell from '@/components/AppShell.vue';
 import AppSidebar from '@/components/AppSidebar.vue';
 import AppSidebarHeader from '@/components/AppSidebarHeader.vue';
+import CommandPalette from '@/components/CommandPalette.vue';
 import { Toaster } from '@/components/ui/sonner';
+import { useKeyboardShortcuts } from '@/composables/useKeyboardShortcuts';
 import type { BreadcrumbItem } from '@/types';
 
 type Props = {
@@ -31,6 +33,12 @@ watch(
     },
     { immediate: true },
 );
+
+const commandPaletteOpen = ref(false);
+
+useKeyboardShortcuts(() => {
+    commandPaletteOpen.value = true;
+});
 </script>
 
 <template>
@@ -42,4 +50,5 @@ watch(
         </AppContent>
     </AppShell>
     <Toaster />
+    <CommandPalette v-model:open="commandPaletteOpen" />
 </template>

@@ -49,6 +49,12 @@ class Project extends Model
         return $this->hasMany(Task::class);
     }
 
+    /** @return HasMany<Label, $this> */
+    public function labels(): HasMany
+    {
+        return $this->hasMany(Label::class);
+    }
+
     /** @return MorphMany<ActivityLog, $this> */
     public function activityLogs(): MorphMany
     {

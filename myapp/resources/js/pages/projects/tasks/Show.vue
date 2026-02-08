@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
 import { Edit, Trash2 } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { nextTick, ref } from 'vue';
 import AttachmentList from '@/components/attachments/AttachmentList.vue';
 import AttachmentUpload from '@/components/attachments/AttachmentUpload.vue';
 import CommentForm from '@/components/comments/CommentForm.vue';
 import CommentList from '@/components/comments/CommentList.vue';
+import LabelManager from '@/components/tasks/LabelManager.vue';
+import SubtaskChecklist from '@/components/tasks/SubtaskChecklist.vue';
 import TaskPriorityBadge from '@/components/tasks/TaskPriorityBadge.vue';
 import TaskStatusBadge from '@/components/tasks/TaskStatusBadge.vue';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -19,8 +21,11 @@ import {
     DialogHeader,
     DialogTitle,
 } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
+import { Textarea } from '@/components/ui/textarea';
 import { getInitials } from '@/composables/useInitials';
+import { timeAgo } from '@/lib/utils';
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { BreadcrumbItem, Project, Task } from '@/types';
 
@@ -45,6 +50,58 @@ function deleteTask() {
         },
     });
 }
+
+const editingTitle = ref(false);
+const editTitle = ref(props.task.title);
+const titleInput = ref<HTMLInputElement>();
+
+function startEditTitle() {
+    editTitle.value = props.task.title;
+    editingTitle.value = true;
+    nextTick(() => titleInput.value?.focus());
+}
+
+function saveTitle() {
+    if (editTitle.value.trim() && editTitle.value !== props.task.title) {
+        router.patch(
+            `/projects/${props.project.id}/tasks/${props.task.id}`,
+            { title: editTitle.value },
+            { preserveState: true, preserveScroll: true },
+        );
+    }
+    editingTitle.value = false;
+}
+
+function cancelEditTitle() {
+    editingTitle.value = false;
+    editTitle.value = props.task.title;
+}
+
+const editingDesc = ref(false);
+const editDesc = ref(props.task.description ?? '');
+const descInput = ref<HTMLTextAreaElement>();
+
+function startEditDesc() {
+    editDesc.value = props.task.description ?? '';
+    editingDesc.value = true;
+    nextTick(() => descInput.value?.focus());
+}
+
+function saveDesc() {
+    if (editDesc.value !== (props.task.description ?? '')) {
+        router.patch(
+            `/projects/${props.project.id}/tasks/${props.task.id}`,
+            { description: editDesc.value || null },
+            { preserveState: true, preserveScroll: true },
+        );
+    }
+    editingDesc.value = false;
+}
+
+function cancelEditDesc() {
+    editingDesc.value = false;
+    editDesc.value = props.task.description ?? '';
+}
 </script>
 
 <template>
@@ -54,7 +111,23 @@ function deleteTask() {
         <div class="flex h-full flex-1 flex-col gap-4 p-4">
             <div class="flex items-start justify-between">
                 <div>
-                    <h1 class="text-2xl font-bold">{{ task.title }}</h1>
+                    <div v-if="editingTitle">
+                        <Input
+                            ref="titleInput"
+                            v-model="editTitle"
+                            class="text-2xl font-bold"
+                            @keydown.enter="saveTitle"
+                            @keydown.escape="cancelEditTitle"
+                            @blur="saveTitle"
+                        />
+                    </div>
+                    <h1
+                        v-else
+                        class="cursor-pointer text-2xl font-bold hover:text-primary/80"
+                        @click="startEditTitle"
+                    >
+                        {{ task.title }}
+                    </h1>
                     <div class="mt-2 flex items-center gap-2">
                         <TaskStatusBadge :status="task.status" />
                         <TaskPriorityBadge :priority="task.priority" />
@@ -86,15 +159,46 @@ function deleteTask() {
                             <CardTitle>Description</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <p
-                                v-if="task.description"
-                                class="text-sm whitespace-pre-wrap"
+                            <div v-if="editingDesc">
+                                <Textarea
+                                    ref="descInput"
+                                    v-model="editDesc"
+                                    rows="4"
+                                    @keydown.escape="cancelEditDesc"
+                                />
+                                <div class="mt-2 flex gap-2">
+                                    <Button size="sm" @click="saveDesc">Save</Button>
+                                    <Button variant="ghost" size="sm" @click="cancelEditDesc">Cancel</Button>
+                                </div>
+                            </div>
+                            <div
+                                v-else
+                                class="cursor-pointer rounded p-1 hover:bg-accent/50"
+                                @click="startEditDesc"
                             >
-                                {{ task.description }}
-                            </p>
-                            <p v-else class="text-sm text-muted-foreground">
-                                No description provided.
-                            </p>
+                                <p
+                                    v-if="task.description"
+                                    class="text-sm whitespace-pre-wrap"
+                                >
+                                    {{ task.description }}
+                                </p>
+                                <p v-else class="text-sm text-muted-foreground">
+                                    Click to add a description...
+                                </p>
+                            </div>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Subtasks</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <SubtaskChecklist
+                                :subtasks="task.subtasks ?? []"
+                                :project-id="project.id"
+                                :parent-task-id="task.id"
+                            />
                         </CardContent>
                     </Card>
 
@@ -178,11 +282,8 @@ function deleteTask() {
                             <div>
                                 <p class="text-muted-foreground">Due Date</p>
                                 <p v-if="task.due_date" class="mt-1">
-                                    {{
-                                        new Date(
-                                            task.due_date,
-                                        ).toLocaleDateString()
-                                    }}
+                                    {{ new Date(task.due_date).toLocaleDateString() }}
+                                    <span class="text-xs text-muted-foreground">({{ timeAgo(task.due_date) }})</span>
                                 </p>
                                 <p v-else class="mt-1 text-muted-foreground">
                                     No due date
@@ -192,13 +293,16 @@ function deleteTask() {
                             <div>
                                 <p class="text-muted-foreground">Created</p>
                                 <p class="mt-1">
-                                    {{
-                                        new Date(
-                                            task.created_at,
-                                        ).toLocaleDateString()
-                                    }}
+                                    {{ timeAgo(task.created_at) }}
                                 </p>
                             </div>
+                            <Separator />
+                            <LabelManager
+                                :task-labels="task.labels ?? []"
+                                :project-labels="project.labels ?? []"
+                                :project-id="project.id"
+                                :task-id="task.id"
+                            />
                         </CardContent>
                     </Card>
                 </div>

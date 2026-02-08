@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Task;
+use App\Notifications\TaskAssigned;
 use App\Services\ActivityLogger;
 
 class TaskObserver
@@ -29,6 +30,10 @@ class TaskObserver
             ActivityLogger::log($task, "Task \"{$task->title}\" was assigned to {$name}", 'assigned', [
                 'assignee_id' => $task->assignee_id,
             ]);
+
+            if ($assignee && $assignee->id !== auth()->id()) {
+                $assignee->notify(new TaskAssigned($task));
+            }
 
             return;
         }

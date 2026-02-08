@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { Head, useForm } from '@inertiajs/vue3';
+import AssigneeCombobox from '@/components/AssigneeCombobox.vue';
+import FormField from '@/components/FormField.vue';
 import { Button } from '@/components/ui/button';
+import { DatePicker } from '@/components/ui/date-picker';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
     Select,
     SelectContent,
@@ -58,35 +60,20 @@ function submit() {
             <h1 class="text-2xl font-bold">Edit Task</h1>
 
             <form @submit.prevent="submit" class="max-w-lg space-y-4">
-                <div class="space-y-2">
-                    <Label for="title">Title</Label>
+                <FormField label="Title" html-for="title" :error="form.errors.title">
                     <Input id="title" v-model="form.title" />
-                    <p
-                        v-if="form.errors.title"
-                        class="text-sm text-destructive"
-                    >
-                        {{ form.errors.title }}
-                    </p>
-                </div>
+                </FormField>
 
-                <div class="space-y-2">
-                    <Label for="description">Description</Label>
+                <FormField label="Description" html-for="description" :error="form.errors.description">
                     <Textarea
                         id="description"
                         v-model="form.description"
                         rows="4"
                     />
-                    <p
-                        v-if="form.errors.description"
-                        class="text-sm text-destructive"
-                    >
-                        {{ form.errors.description }}
-                    </p>
-                </div>
+                </FormField>
 
                 <div class="grid grid-cols-2 gap-4">
-                    <div class="space-y-2">
-                        <Label>Status</Label>
+                    <FormField label="Status">
                         <Select v-model="form.status">
                             <SelectTrigger>
                                 <SelectValue />
@@ -101,10 +88,9 @@ function submit() {
                                 >
                             </SelectContent>
                         </Select>
-                    </div>
+                    </FormField>
 
-                    <div class="space-y-2">
-                        <Label>Priority</Label>
+                    <FormField label="Priority">
                         <Select v-model="form.priority">
                             <SelectTrigger>
                                 <SelectValue />
@@ -118,32 +104,19 @@ function submit() {
                                 >
                             </SelectContent>
                         </Select>
-                    </div>
+                    </FormField>
                 </div>
 
-                <div class="space-y-2">
-                    <Label>Assignee</Label>
-                    <Select v-model="form.assignee_id">
-                        <SelectTrigger>
-                            <SelectValue placeholder="Unassigned" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="none">Unassigned</SelectItem>
-                            <SelectItem
-                                v-for="member in project.members"
-                                :key="member.id"
-                                :value="String(member.id)"
-                            >
-                                {{ member.name }}
-                            </SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
+                <FormField label="Assignee">
+                    <AssigneeCombobox
+                        v-model="form.assignee_id"
+                        :members="project.members ?? []"
+                    />
+                </FormField>
 
-                <div class="space-y-2">
-                    <Label for="due_date">Due Date</Label>
-                    <Input id="due_date" v-model="form.due_date" type="date" />
-                </div>
+                <FormField label="Due Date">
+                    <DatePicker v-model="form.due_date" />
+                </FormField>
 
                 <div class="flex gap-2">
                     <Button type="submit" :disabled="form.processing"

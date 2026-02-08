@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
-import { Shield, Trash2 } from 'lucide-vue-next';
+import { Pencil, Plus, Trash2 } from 'lucide-vue-next';
 import { ref } from 'vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -38,7 +38,7 @@ const props = defineProps<{
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Admin' },
-    { title: 'Users', href: '/admin/users' },
+    { title: 'User Management', href: '/admin/users' },
 ];
 
 const search = ref(props.filters.search ?? '');
@@ -70,12 +70,18 @@ function deleteUser() {
 </script>
 
 <template>
-    <Head title="Manage Users" />
+    <Head title="User Management" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="flex h-full flex-1 flex-col gap-4 p-4">
             <div class="flex items-center justify-between">
-                <h1 class="text-2xl font-bold">Users</h1>
+                <h1 class="text-2xl font-bold">User Management</h1>
+                <Button as-child>
+                    <Link href="/admin/users/create">
+                        <Plus class="mr-2 h-4 w-4" />
+                        Create User
+                    </Link>
+                </Button>
             </div>
 
             <div class="flex items-center gap-2">
@@ -131,8 +137,8 @@ function deleteUser() {
                                         <Link
                                             :href="`/admin/users/${user.id}/edit`"
                                         >
-                                            <Shield class="mr-1 h-4 w-4" />
-                                            Edit Role
+                                            <Pencil class="mr-1 h-4 w-4" />
+                                            Edit
                                         </Link>
                                     </Button>
                                     <Button
@@ -189,7 +195,8 @@ function deleteUser() {
                     <DialogTitle>Delete User</DialogTitle>
                     <DialogDescription>
                         Are you sure you want to delete
-                        {{ userToDelete?.name }}? This action cannot be undone.
+                        "{{ userToDelete?.name }}"? This will remove all their
+                        data. This action cannot be undone.
                     </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>

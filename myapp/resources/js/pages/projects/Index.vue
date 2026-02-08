@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { Plus } from 'lucide-vue-next';
+import { FolderKanban, Plus } from 'lucide-vue-next';
+import EmptyState from '@/components/EmptyState.vue';
 import ProjectCard from '@/components/projects/ProjectCard.vue';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -73,17 +74,16 @@ const breadcrumbs: BreadcrumbItem[] = [
                 />
             </div>
 
-            <div
+            <EmptyState
                 v-else
-                class="flex flex-col items-center justify-center rounded-lg border border-dashed py-12"
+                :icon="FolderKanban"
+                title="No projects found"
+                description="Get started by creating your first project."
             >
-                <p class="text-muted-foreground">No projects found.</p>
-                <Button variant="outline" class="mt-4" as-child>
-                    <Link href="/projects/create"
-                        >Create your first project</Link
-                    >
+                <Button variant="outline" as-child>
+                    <Link href="/projects/create">Create your first project</Link>
                 </Button>
-            </div>
+            </EmptyState>
 
             <div
                 v-if="projects.last_page > 1"

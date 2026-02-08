@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { Head, Link, router } from '@inertiajs/vue3';
 import { Archive, Edit, Settings, Trash2 } from 'lucide-vue-next';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import { useRecentProjects } from '@/composables/useRecentItems';
 import ProjectStatusBadge from '@/components/projects/ProjectStatusBadge.vue';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -26,6 +27,12 @@ const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Projects', href: '/projects' },
     { title: props.project.name },
 ];
+
+const { trackProject } = useRecentProjects();
+
+onMounted(() => {
+    trackProject({ id: props.project.id, name: props.project.name });
+});
 
 const deleteDialogOpen = ref(false);
 

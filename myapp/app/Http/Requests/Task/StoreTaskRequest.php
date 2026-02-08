@@ -21,6 +21,7 @@ class StoreTaskRequest extends FormRequest
             'priority' => 'sometimes|in:low,medium,high,critical',
             'assignee_id' => 'nullable|exists:users,id',
             'due_date' => 'nullable|date',
+            'parent_task_id' => 'nullable|exists:tasks,id',
         ];
     }
 }
