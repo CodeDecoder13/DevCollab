@@ -5,7 +5,7 @@ import type { DefineComponent } from 'vue';
 import { createSSRApp, h } from 'vue';
 import { renderToString } from 'vue/server-renderer';
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'DevCollab';
 
 createServer(
     (page) =>
