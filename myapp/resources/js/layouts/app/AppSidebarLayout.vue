@@ -1,8 +1,12 @@
 <script setup lang="ts">
+import { usePage } from '@inertiajs/vue3';
+import { watch } from 'vue';
+import { toast } from 'vue-sonner';
 import AppContent from '@/components/AppContent.vue';
 import AppShell from '@/components/AppShell.vue';
 import AppSidebar from '@/components/AppSidebar.vue';
 import AppSidebarHeader from '@/components/AppSidebarHeader.vue';
+import { Toaster } from '@/components/ui/sonner';
 import type { BreadcrumbItem } from '@/types';
 
 type Props = {
@@ -12,6 +16,21 @@ type Props = {
 withDefaults(defineProps<Props>(), {
     breadcrumbs: () => [],
 });
+
+const page = usePage();
+
+watch(
+    () => page.props.flash as { success?: string; error?: string },
+    (flash) => {
+        if (flash?.success) {
+            toast.success(flash.success);
+        }
+        if (flash?.error) {
+            toast.error(flash.error);
+        }
+    },
+    { immediate: true },
+);
 </script>
 
 <template>
@@ -22,4 +41,5 @@ withDefaults(defineProps<Props>(), {
             <slot />
         </AppContent>
     </AppShell>
+    <Toaster />
 </template>

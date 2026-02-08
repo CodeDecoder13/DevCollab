@@ -1,0 +1,228 @@
+<script setup lang="ts">
+import { Head, Link, router } from '@inertiajs/vue3';
+import { Edit, Trash2 } from 'lucide-vue-next';
+import { ref } from 'vue';
+import AttachmentList from '@/components/attachments/AttachmentList.vue';
+import AttachmentUpload from '@/components/attachments/AttachmentUpload.vue';
+import CommentForm from '@/components/comments/CommentForm.vue';
+import CommentList from '@/components/comments/CommentList.vue';
+import TaskPriorityBadge from '@/components/tasks/TaskPriorityBadge.vue';
+import TaskStatusBadge from '@/components/tasks/TaskStatusBadge.vue';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/components/ui/dialog';
+import { Separator } from '@/components/ui/separator';
+import { getInitials } from '@/composables/useInitials';
+import AppLayout from '@/layouts/AppLayout.vue';
+import type { BreadcrumbItem, Project, Task } from '@/types';
+
+const props = defineProps<{
+    project: Project;
+    task: Task;
+}>();
+
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Projects', href: '/projects' },
+    { title: props.project.name, href: `/projects/${props.project.id}` },
+    { title: 'Tasks', href: `/projects/${props.project.id}/tasks` },
+    { title: props.task.title },
+];
+
+const deleteDialogOpen = ref(false);
+
+function deleteTask() {
+    router.delete(`/projects/${props.project.id}/tasks/${props.task.id}`, {
+        onFinish: () => {
+            deleteDialogOpen.value = false;
+        },
+    });
+}
+</script>
+
+<template>
+    <Head :title="task.title" />
+
+    <AppLayout :breadcrumbs="breadcrumbs">
+        <div class="flex h-full flex-1 flex-col gap-4 p-4">
+            <div class="flex items-start justify-between">
+                <div>
+                    <h1 class="text-2xl font-bold">{{ task.title }}</h1>
+                    <div class="mt-2 flex items-center gap-2">
+                        <TaskStatusBadge :status="task.status" />
+                        <TaskPriorityBadge :priority="task.priority" />
+                    </div>
+                </div>
+                <div class="flex gap-2">
+                    <Button variant="outline" size="sm" as-child>
+                        <Link
+                            :href="`/projects/${project.id}/tasks/${task.id}/edit`"
+                        >
+                            <Edit class="mr-1 h-4 w-4" />
+                            Edit
+                        </Link>
+                    </Button>
+                    <Button
+                        variant="destructive"
+                        size="sm"
+                        @click="deleteDialogOpen = true"
+                    >
+                        <Trash2 class="h-4 w-4" />
+                    </Button>
+                </div>
+            </div>
+
+            <div class="grid gap-4 lg:grid-cols-3">
+                <div class="space-y-4 lg:col-span-2">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Description</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <p
+                                v-if="task.description"
+                                class="text-sm whitespace-pre-wrap"
+                            >
+                                {{ task.description }}
+                            </p>
+                            <p v-else class="text-sm text-muted-foreground">
+                                No description provided.
+                            </p>
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Comments</CardTitle>
+                        </CardHeader>
+                        <CardContent class="space-y-4">
+                            <CommentList :comments="task.comments ?? []" />
+                            <Separator />
+                            <CommentForm
+                                :project-id="project.id"
+                                :task-id="task.id"
+                            />
+                        </CardContent>
+                    </Card>
+
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Attachments</CardTitle>
+                        </CardHeader>
+                        <CardContent class="space-y-4">
+                            <AttachmentList
+                                :attachments="task.attachments ?? []"
+                            />
+                            <AttachmentUpload
+                                :project-id="project.id"
+                                :task-id="task.id"
+                            />
+                        </CardContent>
+                    </Card>
+                </div>
+
+                <div class="space-y-4">
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Details</CardTitle>
+                        </CardHeader>
+                        <CardContent class="space-y-3 text-sm">
+                            <div>
+                                <p class="text-muted-foreground">Assignee</p>
+                                <div
+                                    v-if="task.assignee"
+                                    class="mt-1 flex items-center gap-2"
+                                >
+                                    <Avatar class="h-6 w-6">
+                                        <AvatarImage
+                                            v-if="task.assignee.avatar"
+                                            :src="task.assignee.avatar"
+                                        />
+                                        <AvatarFallback class="text-[10px]">{{
+                                            getInitials(task.assignee.name)
+                                        }}</AvatarFallback>
+                                    </Avatar>
+                                    <span>{{ task.assignee.name }}</span>
+                                </div>
+                                <span v-else class="text-muted-foreground"
+                                    >Unassigned</span
+                                >
+                            </div>
+                            <Separator />
+                            <div>
+                                <p class="text-muted-foreground">Creator</p>
+                                <div
+                                    v-if="task.creator"
+                                    class="mt-1 flex items-center gap-2"
+                                >
+                                    <Avatar class="h-6 w-6">
+                                        <AvatarImage
+                                            v-if="task.creator.avatar"
+                                            :src="task.creator.avatar"
+                                        />
+                                        <AvatarFallback class="text-[10px]">{{
+                                            getInitials(task.creator.name)
+                                        }}</AvatarFallback>
+                                    </Avatar>
+                                    <span>{{ task.creator.name }}</span>
+                                </div>
+                            </div>
+                            <Separator />
+                            <div>
+                                <p class="text-muted-foreground">Due Date</p>
+                                <p v-if="task.due_date" class="mt-1">
+                                    {{
+                                        new Date(
+                                            task.due_date,
+                                        ).toLocaleDateString()
+                                    }}
+                                </p>
+                                <p v-else class="mt-1 text-muted-foreground">
+                                    No due date
+                                </p>
+                            </div>
+                            <Separator />
+                            <div>
+                                <p class="text-muted-foreground">Created</p>
+                                <p class="mt-1">
+                                    {{
+                                        new Date(
+                                            task.created_at,
+                                        ).toLocaleDateString()
+                                    }}
+                                </p>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+        </div>
+
+        <Dialog v-model:open="deleteDialogOpen">
+            <DialogContent>
+                <DialogHeader>
+                    <DialogTitle>Delete Task</DialogTitle>
+                    <DialogDescription>
+                        Are you sure you want to delete "{{ task.title }}"? This
+                        will also delete all comments and attachments.
+                    </DialogDescription>
+                </DialogHeader>
+                <DialogFooter>
+                    <Button variant="outline" @click="deleteDialogOpen = false"
+                        >Cancel</Button
+                    >
+                    <Button variant="destructive" @click="deleteTask"
+                        >Delete</Button
+                    >
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    </AppLayout>
+</template>
