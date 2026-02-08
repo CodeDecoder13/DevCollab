@@ -7,6 +7,7 @@ use App\Enums\TaskStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
@@ -25,6 +26,7 @@ class Task extends Model
         'creator_id',
         'due_date',
         'position',
+        'parent_task_id',
     ];
 
     protected function casts(): array
@@ -65,6 +67,24 @@ class Task extends Model
     public function attachments(): HasMany
     {
         return $this->hasMany(Attachment::class);
+    }
+
+    /** @return BelongsTo<self, $this> */
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'parent_task_id');
+    }
+
+    /** @return HasMany<self, $this> */
+    public function subtasks(): HasMany
+    {
+        return $this->hasMany(self::class, 'parent_task_id');
+    }
+
+    /** @return BelongsToMany<Label, $this> */
+    public function labels(): BelongsToMany
+    {
+        return $this->belongsToMany(Label::class);
     }
 
     /** @return MorphMany<ActivityLog, $this> */

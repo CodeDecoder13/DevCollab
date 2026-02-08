@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\CommentController;
+use App\Http\Controllers\LabelController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectMemberController;
 use App\Http\Controllers\TaskController;
@@ -16,6 +17,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->parameters(['members' => 'user']);
 
     Route::resource('projects.tasks', TaskController::class);
+    Route::post('projects/{project}/tasks/quick', [TaskController::class, 'quickStore'])
+        ->name('projects.tasks.quick-store');
     Route::patch('projects/{project}/tasks/{task}/status', [TaskController::class, 'updateStatus'])
         ->name('projects.tasks.update-status');
 
@@ -28,4 +31,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('projects.tasks.attachments.store');
     Route::get('attachments/{attachment}', [AttachmentController::class, 'show'])->name('attachments.show');
     Route::delete('attachments/{attachment}', [AttachmentController::class, 'destroy'])->name('attachments.destroy');
+
+    Route::post('projects/{project}/labels', [LabelController::class, 'store'])->name('projects.labels.store');
+    Route::delete('projects/{project}/labels/{label}', [LabelController::class, 'destroy'])->name('projects.labels.destroy');
+    Route::post('projects/{project}/tasks/{task}/labels/{label}/toggle', [LabelController::class, 'toggle'])->name('projects.tasks.labels.toggle');
 });

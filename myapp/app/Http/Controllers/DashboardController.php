@@ -41,6 +41,28 @@ class DashboardController extends Controller
             'completed' => Task::where('assignee_id', $user->id)->where('status', 'completed')->count(),
         ];
 
+        $overdueCount = Task::where('assignee_id', $user->id)
+            ->where('status', '!=', 'completed')
+            ->whereNotNull('due_date')
+            ->where('due_date', '<', now())
+            ->count();
+
+        $overdueTasks = Task::with('project:id,name')
+            ->where('assignee_id', $user->id)
+            ->where('status', '!=', 'completed')
+            ->whereNotNull('due_date')
+            ->where('due_date', '<', now())
+            ->orderBy('due_date')
+            ->take(5)
+            ->get();
+
+        $dueSoonCount = Task::where('assignee_id', $user->id)
+            ->where('status', '!=', 'completed')
+            ->whereNotNull('due_date')
+            ->where('due_date', '>=', now())
+            ->where('due_date', '<=', now()->addDays(3))
+            ->count();
+
         $projectIds = $user->isAdmin()
             ? Project::pluck('id')
             : $user->projects()->pluck('projects.id');
@@ -64,6 +86,9 @@ class DashboardController extends Controller
             'myTasks' => $myTasks,
             'taskStats' => $taskStats,
             'recentActivity' => $recentActivity,
+            'overdueCount' => $overdueCount,
+            'overdueTasks' => $overdueTasks,
+            'dueSoonCount' => $dueSoonCount,
         ]);
     }
 }

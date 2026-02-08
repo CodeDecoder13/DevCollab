@@ -17,5 +17,6 @@ export type AppPageProps<
     auth: Auth;
     sidebarOpen: boolean;
     flash: Flash;
+    unreadNotificationCount: number;
     [key: string]: unknown;
 };

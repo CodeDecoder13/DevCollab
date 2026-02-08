@@ -61,6 +61,7 @@ const columns = computed(() => [
             :title="col.title"
             :tasks="col.tasks"
             :project-id="projectId"
+            :status="col.status"
             @change="handleChange(col.status, $event)"
         />
     </div>

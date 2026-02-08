@@ -18,8 +18,9 @@ class TaskController extends Controller
         $this->authorize('viewAny', [Task::class, $project]);
 
         $tasks = $project->tasks()
-            ->with(['assignee', 'creator'])
-            ->withCount(['comments', 'attachments'])
+            ->whereNull('parent_task_id')
+            ->with(['assignee', 'creator', 'labels'])
+            ->withCount(['comments', 'attachments', 'subtasks', 'subtasks as completed_subtasks_count' => fn ($q) => $q->where('status', 'completed')])
             ->when($request->priority, fn ($q, $priority) => $q->where('priority', $priority))
             ->when($request->assignee_id, fn ($q, $id) => $q->where('assignee_id', $id))
             ->orderBy('position')
@@ -53,6 +54,25 @@ class TaskController extends Controller
             ->with('success', 'Task created successfully.');
     }
 
+    public function quickStore(Request $request, Project $project)
+    {
+        $this->authorize('create', [Task::class, $project]);
+
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'status' => 'required|in:todo,in_progress,completed',
+            'parent_task_id' => 'nullable|exists:tasks,id',
+        ]);
+
+        $project->tasks()->create([
+            ...$validated,
+            'priority' => 'medium',
+            'creator_id' => $request->user()->id,
+        ]);
+
+        return redirect()->back()->with('success', 'Task created.');
+    }
+
     public function show(Project $project, Task $task): Response
     {
         $this->authorize('view', $task);
@@ -60,12 +80,14 @@ class TaskController extends Controller
         $task->load([
             'assignee',
             'creator',
+            'labels',
+            'subtasks' => fn ($q) => $q->with('assignee')->orderBy('created_at'),
             'comments' => fn ($q) => $q->with('user')->latest(),
             'attachments' => fn ($q) => $q->with('user')->latest(),
         ]);
 
         return Inertia::render('projects/tasks/Show', [
-            'project' => $project->load('members'),
+            'project' => $project->load(['members', 'labels']),
             'task' => $task,
         ]);
     }
