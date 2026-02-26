@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\SearchController;
@@ -12,6 +13,13 @@ Route::get('/', function () {
         'canRegister' => Features::enabled(Features::registration()),
     ]);
 })->name('home');
+
+Route::get('/about', fn () => Inertia::render('About'))->name('about');
+Route::get('/features', fn () => Inertia::render('Features'))->name('features');
+Route::get('/solutions', fn () => Inertia::render('Solutions'))->name('solutions');
+Route::get('/guide', fn () => Inertia::render('Guide'))->name('guide');
+Route::get('/contact', fn () => Inertia::render('Contact'))->name('contact');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 Route::get('dashboard', [DashboardController::class, 'index'])
     ->middleware(['auth', 'verified'])
