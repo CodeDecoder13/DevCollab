@@ -2,8 +2,10 @@
 import { Head, Link } from '@inertiajs/vue3';
 import {
     ArrowRight,
+    Bug,
     Eye,
     Heart,
+    Lightbulb,
     Rocket,
     Users,
     Zap,
@@ -45,12 +47,13 @@ const values = [
 ];
 
 const team = [
-    { name: 'Alex Chen', role: 'Co-Founder & CEO', avatar: 'AC', color: 'from-indigo-500 to-violet-500' },
-    { name: 'Sarah Kim', role: 'Co-Founder & CTO', avatar: 'SK', color: 'from-emerald-500 to-teal-500' },
-    { name: 'Marcus Johnson', role: 'Head of Design', avatar: 'MJ', color: 'from-amber-500 to-orange-500' },
-    { name: 'Emily Rodriguez', role: 'Head of Engineering', avatar: 'ER', color: 'from-rose-500 to-pink-500' },
-    { name: 'David Park', role: 'Product Lead', avatar: 'DP', color: 'from-cyan-500 to-blue-500' },
-    { name: 'Lisa Wang', role: 'Developer Relations', avatar: 'LW', color: 'from-violet-500 to-purple-500' },
+    {
+        name: 'Rhuzzel Paramio',
+        role: 'Full-Stack Software Engineer & QA Specialist',
+        avatar: 'RP',
+        color: 'from-indigo-500 to-violet-500',
+        bio: 'Building scalable applications and ensuring they work flawlessly through comprehensive testing and quality assurance.',
+    },
 ];
 </script>
 
@@ -85,7 +88,7 @@ const team = [
         <!-- Mission -->
         <section class="relative overflow-hidden bg-muted/30 py-24 sm:py-32">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div class="grid items-center gap-12 lg:grid-cols-2">
+                <div class="grid items-center gap-8 sm:gap-10 lg:gap-12 lg:grid-cols-2">
                     <div
                         data-animate="mission-text"
                         class="transition-all duration-700"
@@ -95,10 +98,10 @@ const team = [
                             Why DevCollab exists
                         </h2>
                         <p class="mt-6 text-lg leading-relaxed text-muted-foreground">
-                            We were frustrated with bloated project management tools that required weeks of configuration and slowed our teams down. We needed something that just worked — fast, intuitive, and built for how developers actually collaborate.
+                            DevCollab exists to make project management easier to use while working on projects. No more wrestling with bloated tools that slow you down — just a clean, fast workspace that gets out of your way.
                         </p>
                         <p class="mt-4 text-lg leading-relaxed text-muted-foreground">
-                            DevCollab was born from that frustration. We stripped away the complexity and focused on what matters: helping teams ship great software, faster.
+                            Built by a developer who wanted something better, DevCollab brings the best ideas together and automates the tedious parts so your team can focus on what matters: shipping great software.
                         </p>
                     </div>
                     <div
@@ -165,39 +168,76 @@ const team = [
             </div>
         </section>
 
-        <!-- Team -->
-        <section class="bg-muted/30 py-24 sm:py-32">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <!-- Meet the Developer -->
+        <section class="relative overflow-hidden bg-[#0a0a1a] py-24 sm:py-32">
+            <!-- Background decorations -->
+            <div class="absolute inset-0">
+                <div class="absolute left-0 top-1/4 h-[400px] w-[400px] rounded-full bg-gradient-to-br from-teal-500/10 to-transparent blur-3xl" />
+                <div class="absolute bottom-1/4 right-0 h-[300px] w-[300px] rounded-full bg-gradient-to-bl from-indigo-500/10 to-transparent blur-3xl" />
+            </div>
+
+            <div class="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div
                     data-animate="team-header"
                     class="mx-auto mb-16 max-w-2xl text-center transition-all duration-700"
                     :class="isVisible('team-header') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'"
                 >
-                    <h2 class="text-3xl font-bold tracking-tight sm:text-4xl" style="letter-spacing: -0.02em">
-                        Meet the team
+                    <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl" style="letter-spacing: -0.02em">
+                        Meet the developer
                     </h2>
-                    <p class="mt-4 text-lg text-muted-foreground">
-                        Passionate builders creating the future of project management.
+                    <p class="mt-4 text-lg text-white/60">
+                        The person behind DevCollab.
                     </p>
                 </div>
-                <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    <div
-                        v-for="(member, index) in team"
-                        :key="member.name"
-                        :data-animate="`team-${index}`"
-                        class="flex items-center gap-4 rounded-2xl border border-border/50 bg-card p-5 transition-all duration-500 hover:border-primary/20 hover:shadow-lg"
-                        :class="isVisible(`team-${index}`) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'"
-                        :style="{ transitionDelay: `${index * 100}ms` }"
-                    >
-                        <div
-                            class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br text-lg font-bold text-white"
-                            :class="member.color"
-                        >
-                            {{ member.avatar }}
+
+                <div
+                    data-animate="team-0"
+                    class="mx-auto max-w-5xl transition-all duration-700"
+                    :class="isVisible('team-0') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'"
+                >
+                    <div class="grid items-center gap-8 sm:gap-10 lg:grid-cols-2 lg:gap-16">
+                        <!-- Left: Photo with decorative elements -->
+                        <div class="relative flex justify-center lg:justify-start">
+                            <!-- Decorative dot grid (top-left) -->
+                            <div class="absolute -left-4 -top-4 hidden lg:block">
+                                <div class="grid grid-cols-3 gap-2.5">
+                                    <div v-for="n in 9" :key="n" class="h-2 w-2 rounded-full bg-teal-400/40" />
+                                </div>
+                            </div>
+
+                            <!-- Main photo container -->
+                            <div class="relative">
+                                <!-- Glow border effect -->
+                                <div class="absolute -inset-1 rounded-2xl bg-gradient-to-br from-teal-400/60 via-teal-500/20 to-indigo-500/40 opacity-75 blur-sm" />
+                                <div class="absolute -inset-px rounded-2xl bg-gradient-to-br from-teal-400/50 via-teal-500/15 to-indigo-500/30" />
+
+                                <!-- Photo -->
+                                <img
+                                    src="/images/about/profile.JPG"
+                                    alt="Rhuzzel Paramio"
+                                    class="relative aspect-[3/4] w-full max-w-[280px] rounded-2xl object-cover object-top shadow-2xl sm:max-w-[320px]"
+                                />
+
+                            </div>
                         </div>
-                        <div>
-                            <div class="font-semibold">{{ member.name }}</div>
-                            <div class="text-sm text-muted-foreground">{{ member.role }}</div>
+
+                        <!-- Right: Info -->
+                        <div class="text-center lg:text-left">
+                            <!-- Name -->
+                            <h3 class="text-3xl font-extrabold tracking-tight text-white sm:text-4xl lg:text-5xl" style="letter-spacing: -0.02em">
+                                {{ team[0].name }}
+                            </h3>
+
+                            <!-- Role -->
+                            <p class="mt-3 text-base font-semibold text-teal-400 sm:text-lg">
+                                {{ team[0].role }}
+                            </p>
+
+                            <!-- Bio -->
+                            <p class="mt-5 text-base leading-relaxed text-white/60" style="line-height: 1.7">
+                                {{ team[0].bio }}
+                            </p>
+
                         </div>
                     </div>
                 </div>
@@ -227,6 +267,63 @@ const team = [
                             <ArrowRight class="ml-2 h-4 w-4" />
                         </Link>
                     </Button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Bug Reports & Improvements -->
+        <section class="border-t border-border/50 bg-muted/30 py-24 sm:py-32">
+            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div
+                    data-animate="feedback-header"
+                    class="mx-auto mb-16 max-w-2xl text-center transition-all duration-700"
+                    :class="isVisible('feedback-header') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'"
+                >
+                    <h2 class="text-3xl font-bold tracking-tight sm:text-4xl" style="letter-spacing: -0.02em">
+                        Help us improve
+                    </h2>
+                    <p class="mt-4 text-lg text-muted-foreground">
+                        Found a bug or have an idea to make DevCollab better? We'd love to hear from you.
+                    </p>
+                </div>
+                <div
+                    data-animate="feedback-cards"
+                    class="mx-auto grid max-w-3xl gap-4 sm:gap-6 sm:grid-cols-2 transition-all duration-700"
+                    :class="isVisible('feedback-cards') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'"
+                >
+                    <!-- Bug Report -->
+                    <Link
+                        href="/contact"
+                        class="group flex flex-col items-center rounded-2xl border border-border/50 bg-card p-8 text-center transition-all duration-300 hover:-translate-y-1 hover:border-rose-500/30 hover:shadow-lg hover:shadow-rose-500/5"
+                    >
+                        <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-rose-100 text-rose-600 transition-colors group-hover:bg-rose-500 group-hover:text-white dark:bg-rose-950/50 dark:text-rose-400">
+                            <Bug class="h-7 w-7" />
+                        </div>
+                        <h3 class="mt-4 text-lg font-semibold">Report a Bug</h3>
+                        <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
+                            Something not working right? Let us know and we'll fix it as soon as possible.
+                        </p>
+                        <span class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary">
+                            Report bug <ArrowRight class="h-4 w-4" />
+                        </span>
+                    </Link>
+
+                    <!-- Suggest Improvement -->
+                    <Link
+                        href="/contact"
+                        class="group flex flex-col items-center rounded-2xl border border-border/50 bg-card p-8 text-center transition-all duration-300 hover:-translate-y-1 hover:border-indigo-500/30 hover:shadow-lg hover:shadow-indigo-500/5"
+                    >
+                        <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600 transition-colors group-hover:bg-indigo-500 group-hover:text-white dark:bg-indigo-950/50 dark:text-indigo-400">
+                            <Lightbulb class="h-7 w-7" />
+                        </div>
+                        <h3 class="mt-4 text-lg font-semibold">Suggest an Improvement</h3>
+                        <p class="mt-2 text-sm leading-relaxed text-muted-foreground">
+                            Have an idea to make DevCollab better? We're always looking for ways to improve.
+                        </p>
+                        <span class="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary">
+                            Share idea <ArrowRight class="h-4 w-4" />
+                        </span>
+                    </Link>
                 </div>
             </div>
         </section>

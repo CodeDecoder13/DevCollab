@@ -90,7 +90,7 @@ function submit() {
             <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
                 <div
                     data-animate="contact-form"
-                    class="grid gap-12 lg:grid-cols-5 transition-all duration-700"
+                    class="grid gap-8 sm:gap-10 lg:gap-12 lg:grid-cols-5 transition-all duration-700"
                     :class="isVisible('contact-form') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'"
                 >
                     <!-- Form -->
@@ -162,7 +162,7 @@ function submit() {
                     </div>
 
                     <!-- Info Cards -->
-                    <div class="space-y-6 lg:col-span-2">
+                    <div class="space-y-4 sm:space-y-6 lg:col-span-2">
                         <div class="rounded-2xl border border-border/50 bg-card p-6 shadow-sm">
                             <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-950/50">
                                 <Mail class="h-5 w-5 text-indigo-600 dark:text-indigo-400" />

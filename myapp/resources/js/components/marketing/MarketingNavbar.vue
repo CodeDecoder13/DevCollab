@@ -113,14 +113,14 @@ const simpleLinks = [
 
             <!-- Desktop Nav -->
             <div class="hidden items-center md:flex">
-                <NavigationMenu>
+                <NavigationMenu :viewport="false">
                     <NavigationMenuList>
                         <!-- Features Dropdown -->
                         <NavigationMenuItem>
                             <NavigationMenuTrigger :class="triggerOverride">
                                 Features
                             </NavigationMenuTrigger>
-                            <NavigationMenuContent class="w-[550px]">
+                            <NavigationMenuContent class="!w-[550px] md:!w-[550px]">
                                 <div class="grid grid-cols-2 gap-1 p-3">
                                     <Link
                                         v-for="item in featuresItems"
@@ -143,7 +143,7 @@ const simpleLinks = [
                             <NavigationMenuTrigger :class="triggerOverride">
                                 Solutions
                             </NavigationMenuTrigger>
-                            <NavigationMenuContent class="w-[420px]">
+                            <NavigationMenuContent class="!w-[420px] md:!w-[420px]">
                                 <div class="grid gap-1 p-3">
                                     <Link
                                         v-for="item in solutionsItems"
