@@ -1,16 +1,16 @@
 <script setup lang="ts">
 import { Head, Link } from '@inertiajs/vue3';
-import { useWindowScroll } from '@vueuse/core';
 import {
     Activity,
     ArrowRight,
+    BarChart3,
     Bell,
+    Check,
     CheckSquare,
+    ChevronLeft,
     ChevronRight,
     FolderKanban,
-    GitBranch,
     Layers,
-    Menu,
     MessageSquare,
     Quote,
     Rocket,
@@ -18,29 +18,11 @@ import {
     Star,
     Users,
     Zap,
-    Check,
-    BarChart3,
-    Globe,
 } from 'lucide-vue-next';
-import { computed, onMounted, onUnmounted, ref, watch, nextTick } from 'vue';
-import AppLogoIcon from '@/components/AppLogoIcon.vue';
-import ThemeToggle from '@/components/ThemeToggle.vue';
+import { onMounted, onUnmounted, ref } from 'vue';
+import MarketingLayout from '@/layouts/MarketingLayout.vue';
 import { Button } from '@/components/ui/button';
-import {
-    Card,
-    CardContent,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
-import {
-    Sheet,
-    SheetContent,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from '@/components/ui/sheet';
-import { dashboard, login, register } from '@/routes';
+import { register } from '@/routes';
 
 withDefaults(
     defineProps<{
@@ -51,9 +33,7 @@ withDefaults(
     },
 );
 
-const { y } = useWindowScroll();
-const isScrolled = computed(() => y.value > 50);
-const mobileMenuOpen = ref(false);
+// (scroll state moved to MarketingNavbar)
 
 // Hero background video carousel
 const heroVideos = ['/herosection/vid-1.mp4', '/herosection/vid-2.mp4', '/herosection/vid-3.mp4'];
@@ -126,7 +106,6 @@ function jumpToVideo(index: number) {
 }
 
 function scrollTo(id: string) {
-    mobileMenuOpen.value = false;
     const el = document.querySelector(id);
     el?.scrollIntoView({ behavior: 'smooth' });
 }
@@ -151,11 +130,14 @@ onMounted(() => {
     document.querySelectorAll('[data-animate]').forEach((el) => {
         observer?.observe(el);
     });
+
+    startTestimonialTimer();
 });
 
 onUnmounted(() => {
     observer?.disconnect();
     if (videoTimer) clearTimeout(videoTimer);
+    if (testimonialTimer) clearInterval(testimonialTimer);
 });
 
 function isVisible(key: string) {
@@ -241,7 +223,42 @@ const testimonials = [
         quote: 'We migrated from Jira in a weekend. DevCollab gives us everything we need without the bloat. Our team velocity went up 30%.',
         rating: 5,
     },
+    {
+        name: 'Alex Thompson',
+        role: 'VP of Engineering',
+        company: 'NexGen',
+        avatar: 'AT',
+        avatarColor: 'from-cyan-500 to-blue-500',
+        quote: 'The real-time collaboration features are a game-changer. Our distributed team across 3 time zones works seamlessly now.',
+        rating: 5,
+    },
 ];
+
+// Testimonial carousel
+const activeTestimonial = ref(0);
+let testimonialTimer: ReturnType<typeof setInterval> | null = null;
+
+function startTestimonialTimer() {
+    if (testimonialTimer) clearInterval(testimonialTimer);
+    testimonialTimer = setInterval(() => {
+        activeTestimonial.value = (activeTestimonial.value + 1) % testimonials.length;
+    }, 7000);
+}
+
+function prevTestimonial() {
+    activeTestimonial.value = (activeTestimonial.value - 1 + testimonials.length) % testimonials.length;
+    startTestimonialTimer();
+}
+
+function nextTestimonial() {
+    activeTestimonial.value = (activeTestimonial.value + 1) % testimonials.length;
+    startTestimonialTimer();
+}
+
+function goToTestimonial(index: number) {
+    activeTestimonial.value = index;
+    startTestimonialTimer();
+}
 
 const stats = [
     { value: '10K+', label: 'Teams', icon: Users },
@@ -289,11 +306,6 @@ const pricingPlans = [
     },
 ];
 
-const navLinks = [
-    { label: 'Features', href: '#features' },
-    { label: 'Testimonials', href: '#testimonials' },
-    { label: 'Pricing', href: '#pricing' },
-];
 </script>
 
 <template>
@@ -302,101 +314,7 @@ const navLinks = [
         <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
     </Head>
 
-    <div class="min-h-screen bg-background text-foreground" style="scroll-behavior: smooth">
-        <!-- Sticky Navigation -->
-        <nav
-            class="fixed inset-x-0 top-0 z-50 transition-all duration-300"
-            :class="
-                isScrolled
-                    ? 'border-b border-border/50 bg-background/80 shadow-sm backdrop-blur-xl'
-                    : 'bg-transparent'
-            "
-        >
-            <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-                <Link href="/" class="flex items-center gap-2">
-                    <AppLogoIcon class="h-8 w-8" />
-                    <span class="text-lg font-bold tracking-tight transition-colors" :class="isScrolled ? 'text-foreground' : 'text-white'">DevCollab</span>
-                </Link>
-
-                <!-- Desktop Nav -->
-                <div class="hidden items-center gap-1 md:flex">
-                    <button
-                        v-for="link in navLinks"
-                        :key="link.href"
-                        class="rounded-lg px-3.5 py-2 text-sm font-medium transition-colors"
-                        :class="isScrolled ? 'text-muted-foreground hover:bg-accent hover:text-foreground' : 'text-white/70 hover:text-white hover:bg-white/10'"
-                        @click="scrollTo(link.href)"
-                    >
-                        {{ link.label }}
-                    </button>
-                </div>
-
-                <div class="hidden items-center gap-2 md:flex">
-                    <ThemeToggle />
-                    <template v-if="$page.props.auth.user">
-                        <Button as-child>
-                            <Link :href="dashboard()">
-                                Dashboard
-                                <ArrowRight class="ml-1.5 h-4 w-4" />
-                            </Link>
-                        </Button>
-                    </template>
-                    <template v-else>
-                        <Button variant="ghost" as-child :class="isScrolled ? '' : 'text-white/80 hover:text-white hover:bg-white/10'">
-                            <Link :href="login()">Log in</Link>
-                        </Button>
-                        <Button v-if="canRegister" as-child class="bg-gradient-to-r from-indigo-600 to-violet-600 text-white shadow-md shadow-indigo-500/25 hover:shadow-lg hover:shadow-indigo-500/30 border-0">
-                            <Link :href="register()">
-                                Get Started
-                                <ArrowRight class="ml-1.5 h-4 w-4" />
-                            </Link>
-                        </Button>
-                    </template>
-                </div>
-
-                <!-- Mobile Hamburger -->
-                <div class="flex items-center gap-1 md:hidden">
-                    <ThemeToggle />
-                    <Sheet v-model:open="mobileMenuOpen">
-                        <SheetTrigger as-child>
-                            <Button variant="ghost" size="sm" :class="isScrolled ? '' : 'text-white hover:bg-white/10'">
-                                <Menu class="h-5 w-5" />
-                            </Button>
-                        </SheetTrigger>
-                    <SheetContent side="right" class="w-72">
-                        <SheetHeader>
-                            <SheetTitle>Menu</SheetTitle>
-                        </SheetHeader>
-                        <div class="mt-6 flex flex-col gap-4">
-                            <button
-                                v-for="link in navLinks"
-                                :key="link.href"
-                                class="text-left text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-                                @click="scrollTo(link.href)"
-                            >
-                                {{ link.label }}
-                            </button>
-                            <hr class="my-2 border-border" />
-                            <template v-if="$page.props.auth.user">
-                                <Button as-child class="w-full">
-                                    <Link :href="dashboard()">Dashboard</Link>
-                                </Button>
-                            </template>
-                            <template v-else>
-                                <Button variant="outline" as-child class="w-full">
-                                    <Link :href="login()">Log in</Link>
-                                </Button>
-                                <Button v-if="canRegister" as-child class="w-full">
-                                    <Link :href="register()">Get Started</Link>
-                                </Button>
-                            </template>
-                        </div>
-                    </SheetContent>
-                    </Sheet>
-                </div>
-            </div>
-        </nav>
-
+    <MarketingLayout transparent-nav :can-register="canRegister">
         <!-- Hero Section -->
         <section class="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-[#09090b] pt-16">
             <!-- Video Background with Crossfade -->
@@ -837,65 +755,102 @@ const navLinks = [
             </div>
         </section>
 
-        <!-- Testimonials Section -->
-        <section id="testimonials" class="py-24 sm:py-32">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <!-- Testimonials Section — Jira-style full-width dark carousel -->
+        <section id="testimonials" class="relative overflow-hidden bg-[#09090b] py-24 sm:py-32">
+            <!-- Decorative elements -->
+            <div class="absolute inset-0">
+                <div class="absolute left-0 top-1/4 h-[400px] w-[400px] rounded-full bg-gradient-to-br from-indigo-500/10 to-transparent blur-3xl" />
+                <div class="absolute bottom-1/3 right-0 h-[300px] w-[300px] rounded-full bg-gradient-to-bl from-violet-500/10 to-transparent blur-3xl" />
+                <div class="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]" />
+            </div>
+
+            <div class="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <!-- Header -->
                 <div
                     data-animate="testimonials-header"
-                    class="mx-auto mb-16 max-w-2xl text-center transition-all duration-700"
+                    class="mb-16 text-center transition-all duration-700"
                     :class="isVisible('testimonials-header') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'"
                 >
-                    <div class="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
+                    <div class="mb-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-indigo-400">
                         <MessageSquare class="h-3.5 w-3.5" />
                         Testimonials
                     </div>
-                    <h2 class="text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl" style="letter-spacing: -0.02em">
+                    <h2 class="text-3xl font-bold tracking-tight text-white sm:text-4xl lg:text-5xl" style="letter-spacing: -0.02em">
                         Loved by teams everywhere
                     </h2>
-                    <p class="mt-4 text-lg text-muted-foreground">
+                    <p class="mx-auto mt-4 max-w-2xl text-lg text-white/60">
                         See what engineering teams are saying about DevCollab.
                     </p>
                 </div>
 
-                <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    <div
-                        v-for="(testimonial, index) in testimonials"
-                        :key="testimonial.name"
-                        :data-animate="`testimonial-${index}`"
-                        class="group relative overflow-hidden rounded-2xl border border-border/50 bg-card p-6 transition-all duration-500 hover:border-primary/20 hover:shadow-lg hover:shadow-primary/5"
-                        :class="isVisible(`testimonial-${index}`) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'"
-                        :style="{ transitionDelay: `${index * 150}ms` }"
-                    >
-                        <!-- Quote decoration -->
-                        <Quote class="absolute -right-2 -top-2 h-20 w-20 rotate-180 text-primary/5" />
+                <!-- Carousel -->
+                <div
+                    data-animate="testimonial-carousel"
+                    class="transition-all duration-700"
+                    :class="isVisible('testimonial-carousel') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'"
+                >
+                    <div class="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+                        <!-- Left: Avatar & Decorative -->
+                        <div class="relative flex items-center justify-center">
+                            <div class="absolute -left-10 -top-10 h-64 w-64 rounded-full bg-gradient-to-br from-indigo-500/20 to-violet-500/10 blur-3xl" />
+                            <div class="absolute -bottom-8 -right-8 h-48 w-48 rounded-full bg-gradient-to-tl from-violet-500/15 to-transparent blur-2xl" />
 
-                        <!-- Stars -->
-                        <div class="relative mb-4 flex gap-1">
-                            <Star
-                                v-for="n in testimonial.rating"
-                                :key="n"
-                                class="h-4 w-4 fill-amber-400 text-amber-400"
+                            <div class="relative">
+                                <div
+                                    class="flex h-48 w-48 items-center justify-center rounded-full text-5xl font-bold text-white shadow-2xl ring-4 ring-white/10 transition-all duration-500 sm:h-56 sm:w-56 sm:text-6xl"
+                                    :class="`bg-gradient-to-br ${testimonials[activeTestimonial].avatarColor}`"
+                                >
+                                    {{ testimonials[activeTestimonial].avatar }}
+                                </div>
+                                <div class="absolute -bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/10 bg-white/10 px-4 py-1.5 text-sm font-medium text-white backdrop-blur-md">
+                                    {{ testimonials[activeTestimonial].company }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: Quote -->
+                        <div class="text-center lg:text-left">
+                            <Quote class="mb-6 h-10 w-10 text-indigo-400/40" />
+                            <blockquote class="text-xl font-medium leading-relaxed text-white sm:text-2xl lg:text-3xl" style="line-height: 1.4">
+                                "{{ testimonials[activeTestimonial].quote }}"
+                            </blockquote>
+                            <div class="mt-8">
+                                <div class="text-lg font-semibold text-white">{{ testimonials[activeTestimonial].name }}</div>
+                                <div class="mt-1 text-sm text-white/50">{{ testimonials[activeTestimonial].role }} at {{ testimonials[activeTestimonial].company }}</div>
+                            </div>
+                            <div class="mt-4 flex justify-center gap-1 lg:justify-start">
+                                <Star
+                                    v-for="n in testimonials[activeTestimonial].rating"
+                                    :key="n"
+                                    class="h-5 w-5 fill-amber-400 text-amber-400"
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Controls -->
+                    <div class="mt-12 flex items-center justify-center gap-4">
+                        <button
+                            class="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+                            @click="prevTestimonial"
+                        >
+                            <ChevronLeft class="h-5 w-5" />
+                        </button>
+                        <div class="flex gap-2">
+                            <button
+                                v-for="(_, index) in testimonials"
+                                :key="index"
+                                class="h-2.5 rounded-full transition-all duration-300"
+                                :class="activeTestimonial === index ? 'w-8 bg-indigo-500' : 'w-2.5 bg-white/20 hover:bg-white/40'"
+                                @click="goToTestimonial(index)"
                             />
                         </div>
-
-                        <!-- Quote text -->
-                        <p class="relative mb-6 text-sm leading-relaxed text-muted-foreground">
-                            "{{ testimonial.quote }}"
-                        </p>
-
-                        <!-- Author -->
-                        <div class="relative flex items-center gap-3">
-                            <div
-                                class="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br text-sm font-semibold text-white"
-                                :class="testimonial.avatarColor"
-                            >
-                                {{ testimonial.avatar }}
-                            </div>
-                            <div>
-                                <div class="text-sm font-semibold">{{ testimonial.name }}</div>
-                                <div class="text-xs text-muted-foreground">{{ testimonial.role }} at {{ testimonial.company }}</div>
-                            </div>
-                        </div>
+                        <button
+                            class="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 bg-white/5 text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+                            @click="nextTestimonial"
+                        >
+                            <ChevronRight class="h-5 w-5" />
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1029,53 +984,5 @@ const navLinks = [
             </div>
         </section>
 
-        <!-- Footer -->
-        <footer class="border-t border-border/50 bg-card/50 py-16">
-            <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-                    <!-- Brand -->
-                    <div class="sm:col-span-2">
-                        <div class="flex items-center gap-2">
-                            <AppLogoIcon class="h-7 w-7" />
-                            <span class="text-lg font-bold tracking-tight">DevCollab</span>
-                        </div>
-                        <p class="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
-                            The modern project management platform built for development teams that ship great software.
-                        </p>
-                        <div class="mt-4 flex items-center gap-3 text-sm text-muted-foreground">
-                            <Globe class="h-4 w-4" />
-                            Built with Laravel, Vue, and Tailwind CSS
-                        </div>
-                    </div>
-
-                    <!-- Product Links -->
-                    <div>
-                        <h4 class="mb-4 text-sm font-semibold">Product</h4>
-                        <div class="flex flex-col gap-3">
-                            <button class="text-left text-sm text-muted-foreground transition-colors hover:text-foreground" @click="scrollTo('#features')">Features</button>
-                            <button class="text-left text-sm text-muted-foreground transition-colors hover:text-foreground" @click="scrollTo('#testimonials')">Testimonials</button>
-                            <button class="text-left text-sm text-muted-foreground transition-colors hover:text-foreground" @click="scrollTo('#pricing')">Pricing</button>
-                        </div>
-                    </div>
-
-                    <!-- Account Links -->
-                    <div>
-                        <h4 class="mb-4 text-sm font-semibold">Account</h4>
-                        <div class="flex flex-col gap-3">
-                            <Link :href="login()" class="text-sm text-muted-foreground transition-colors hover:text-foreground">Log in</Link>
-                            <Link v-if="canRegister" :href="register()" class="text-sm text-muted-foreground transition-colors hover:text-foreground">Create Account</Link>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border/50 pt-8 text-sm text-muted-foreground md:flex-row">
-                    <p>&copy; {{ new Date().getFullYear() }} DevCollab. All rights reserved.</p>
-                    <div class="flex items-center gap-6">
-                        <span>Privacy Policy</span>
-                        <span>Terms of Service</span>
-                    </div>
-                </div>
-            </div>
-        </footer>
-    </div>
+    </MarketingLayout>
 </template>
