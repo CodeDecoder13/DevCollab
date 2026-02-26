@@ -338,7 +338,7 @@ const integrations = [
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div
                     :data-animate="`feature-${index}`"
-                    class="grid items-center gap-12 lg:grid-cols-2 lg:gap-16 transition-all duration-700"
+                    class="grid items-center gap-8 sm:gap-10 lg:grid-cols-2 lg:gap-16 transition-all duration-700"
                     :class="[
                         isVisible(`feature-${index}`) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8',
                         index % 2 !== 0 ? 'lg:[direction:rtl]' : '',
@@ -384,8 +384,8 @@ const integrations = [
                             </div>
 
                             <!-- Kanban Board Mockup -->
-                            <div v-if="feature.id === 'kanban'" class="p-4 sm:p-6">
-                                <div class="grid grid-cols-3 gap-3">
+                            <div v-if="feature.id === 'kanban'" class="p-3 sm:p-6">
+                                <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3">
                                     <div class="space-y-2">
                                         <div class="flex items-center gap-2 pb-1">
                                             <div class="h-2 w-2 rounded-full bg-blue-500" />
@@ -434,7 +434,7 @@ const integrations = [
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="space-y-2">
+                                    <div class="hidden space-y-2 sm:block">
                                         <div class="flex items-center gap-2 pb-1">
                                             <div class="h-2 w-2 rounded-full bg-emerald-500" />
                                             <div class="text-[10px] font-medium text-muted-foreground">Done</div>
@@ -671,9 +671,9 @@ const integrations = [
                             </div>
 
                             <!-- Analytics Mockup -->
-                            <div v-else-if="feature.id === 'analytics'" class="p-4 sm:p-6">
+                            <div v-else-if="feature.id === 'analytics'" class="p-3 sm:p-6">
                                 <!-- Stats row -->
-                                <div class="grid grid-cols-3 gap-2 mb-4">
+                                <div class="grid grid-cols-3 gap-1.5 mb-4 sm:gap-2">
                                     <div class="rounded-lg border border-border/50 bg-background p-2">
                                         <div class="text-[8px] text-muted-foreground">Velocity</div>
                                         <div class="text-sm font-bold text-foreground">42 pts</div>
@@ -766,7 +766,7 @@ const integrations = [
                     <p class="mx-auto mt-2 max-w-lg text-sm text-muted-foreground">
                         Connect DevCollab with the tools your team already uses for a seamless workflow.
                     </p>
-                    <div class="mt-10 flex flex-wrap items-center justify-center gap-8 sm:gap-12">
+                    <div class="mt-10 flex flex-wrap items-center justify-center gap-5 sm:gap-8 lg:gap-12">
                         <div
                             v-for="integration in integrations"
                             :key="integration.name"

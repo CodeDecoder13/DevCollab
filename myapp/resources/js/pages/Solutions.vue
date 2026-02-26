@@ -142,7 +142,7 @@ const heroStats = [
                 </p>
 
                 <!-- Hero Stats -->
-                <div class="mx-auto mt-10 grid max-w-lg grid-cols-4 gap-6">
+                <div class="mx-auto mt-10 grid max-w-lg grid-cols-2 gap-4 sm:grid-cols-4 sm:gap-6">
                     <div v-for="stat in heroStats" :key="stat.label" class="text-center">
                         <div class="text-2xl font-extrabold tracking-tight sm:text-3xl">{{ stat.value }}</div>
                         <div class="mt-0.5 text-xs text-muted-foreground">{{ stat.label }}</div>
@@ -172,7 +172,7 @@ const heroStats = [
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div
                     :data-animate="`solution-${index}`"
-                    class="grid items-center gap-12 lg:grid-cols-2 lg:gap-16 transition-all duration-700"
+                    class="grid items-center gap-8 sm:gap-10 lg:grid-cols-2 lg:gap-16 transition-all duration-700"
                     :class="[
                         isVisible(`solution-${index}`) ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8',
                         index % 2 !== 0 ? 'lg:[direction:rtl]' : '',
@@ -235,7 +235,7 @@ const heroStats = [
                                 <div class="mb-4 h-2 w-full overflow-hidden rounded-full bg-muted">
                                     <div class="h-full w-2/3 rounded-full bg-gradient-to-r from-indigo-500 to-blue-500" />
                                 </div>
-                                <div class="grid grid-cols-3 gap-2">
+                                <div class="grid grid-cols-2 gap-2 sm:grid-cols-3">
                                     <div class="space-y-1.5">
                                         <div class="flex items-center gap-1 pb-1">
                                             <div class="h-1.5 w-1.5 rounded-full bg-blue-500" />
@@ -269,7 +269,7 @@ const heroStats = [
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="space-y-1.5">
+                                    <div class="hidden space-y-1.5 sm:block">
                                         <div class="flex items-center gap-1 pb-1">
                                             <div class="h-1.5 w-1.5 rounded-full bg-emerald-500" />
                                             <div class="text-[9px] font-medium text-muted-foreground">Done</div>
@@ -415,10 +415,10 @@ const heroStats = [
                                     <div class="rounded-full bg-amber-100 px-2 py-0.5 text-[9px] font-medium text-amber-600 dark:bg-amber-950/50 dark:text-amber-400">Enterprise</div>
                                 </div>
                                 <!-- Org stats -->
-                                <div class="grid grid-cols-3 gap-2 mb-3">
-                                    <div class="rounded-lg border border-border/50 bg-background p-2 text-center">
-                                        <div class="text-sm font-bold">12</div>
-                                        <div class="text-[8px] text-muted-foreground">Teams</div>
+                                <div class="grid grid-cols-3 gap-1.5 mb-3 sm:gap-2">
+                                    <div class="rounded-lg border border-border/50 bg-background p-1.5 text-center sm:p-2">
+                                        <div class="text-xs font-bold sm:text-sm">12</div>
+                                        <div class="text-[7px] text-muted-foreground sm:text-[8px]">Teams</div>
                                     </div>
                                     <div class="rounded-lg border border-border/50 bg-background p-2 text-center">
                                         <div class="text-sm font-bold">148</div>
@@ -497,62 +497,64 @@ const heroStats = [
                     class="transition-all duration-700"
                     :class="isVisible('comparison-table') ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'"
                 >
-                    <div class="overflow-hidden rounded-2xl border border-border/50 bg-card">
-                        <!-- Header -->
-                        <div class="grid grid-cols-4 border-b border-border/50 bg-muted/50">
-                            <div class="p-4 sm:p-5">
-                                <span class="text-sm font-medium text-muted-foreground">Features</span>
+                    <div class="overflow-x-auto -mx-4 sm:mx-0">
+                        <div class="min-w-[480px] overflow-hidden rounded-2xl border border-border/50 bg-card sm:min-w-0">
+                            <!-- Header -->
+                            <div class="grid grid-cols-4 border-b border-border/50 bg-muted/50">
+                                <div class="p-3 sm:p-5">
+                                    <span class="text-xs font-medium text-muted-foreground sm:text-sm">Features</span>
+                                </div>
+                                <div class="p-3 text-center sm:p-5">
+                                    <div class="text-xs font-semibold sm:text-sm">Free</div>
+                                    <div class="text-[10px] text-muted-foreground sm:text-xs">$0/mo</div>
+                                </div>
+                                <div class="relative p-3 text-center sm:p-5">
+                                    <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-indigo-500 to-violet-500" />
+                                    <div class="text-xs font-semibold sm:text-sm">Pro</div>
+                                    <div class="text-[10px] text-muted-foreground sm:text-xs">$12/mo</div>
+                                </div>
+                                <div class="p-3 text-center sm:p-5">
+                                    <div class="text-xs font-semibold sm:text-sm">Enterprise</div>
+                                    <div class="text-[10px] text-muted-foreground sm:text-xs">$39/mo</div>
+                                </div>
                             </div>
-                            <div class="p-4 text-center sm:p-5">
-                                <div class="text-sm font-semibold">Free</div>
-                                <div class="text-xs text-muted-foreground">$0/mo</div>
-                            </div>
-                            <div class="relative p-4 text-center sm:p-5">
-                                <div class="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-indigo-500 to-violet-500" />
-                                <div class="text-sm font-semibold">Pro</div>
-                                <div class="text-xs text-muted-foreground">$12/mo</div>
-                            </div>
-                            <div class="p-4 text-center sm:p-5">
-                                <div class="text-sm font-semibold">Enterprise</div>
-                                <div class="text-xs text-muted-foreground">$39/mo</div>
-                            </div>
-                        </div>
-                        <!-- Rows -->
-                        <div
-                            v-for="(row, rowIndex) in comparisonFeatures"
-                            :key="row.name"
-                            class="grid grid-cols-4 border-b border-border/30 last:border-b-0"
-                            :class="rowIndex % 2 === 0 ? '' : 'bg-muted/20'"
-                        >
-                            <div class="flex items-center p-3 sm:p-4">
-                                <span class="text-xs sm:text-sm text-foreground">{{ row.name }}</span>
-                            </div>
-                            <div class="flex items-center justify-center p-3 sm:p-4">
-                                <template v-if="typeof row.free === 'boolean'">
-                                    <div v-if="row.free" class="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-950/50">
-                                        <Check class="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
-                                    </div>
-                                    <Minus v-else class="h-4 w-4 text-muted-foreground/30" />
-                                </template>
-                                <span v-else class="text-xs sm:text-sm font-medium text-foreground">{{ row.free }}</span>
-                            </div>
-                            <div class="flex items-center justify-center p-3 sm:p-4">
-                                <template v-if="typeof row.pro === 'boolean'">
-                                    <div v-if="row.pro" class="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-950/50">
-                                        <Check class="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
-                                    </div>
-                                    <Minus v-else class="h-4 w-4 text-muted-foreground/30" />
-                                </template>
-                                <span v-else class="text-xs sm:text-sm font-medium text-foreground">{{ row.pro }}</span>
-                            </div>
-                            <div class="flex items-center justify-center p-3 sm:p-4">
-                                <template v-if="typeof row.enterprise === 'boolean'">
-                                    <div v-if="row.enterprise" class="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-950/50">
-                                        <Check class="h-3 w-3 text-emerald-600 dark:text-emerald-400" />
-                                    </div>
-                                    <Minus v-else class="h-4 w-4 text-muted-foreground/30" />
-                                </template>
-                                <span v-else class="text-xs sm:text-sm font-medium text-foreground">{{ row.enterprise }}</span>
+                            <!-- Rows -->
+                            <div
+                                v-for="(row, rowIndex) in comparisonFeatures"
+                                :key="row.name"
+                                class="grid grid-cols-4 border-b border-border/30 last:border-b-0"
+                                :class="rowIndex % 2 === 0 ? '' : 'bg-muted/20'"
+                            >
+                                <div class="flex items-center p-2.5 sm:p-4">
+                                    <span class="text-[11px] text-foreground sm:text-sm">{{ row.name }}</span>
+                                </div>
+                                <div class="flex items-center justify-center p-2.5 sm:p-4">
+                                    <template v-if="typeof row.free === 'boolean'">
+                                        <div v-if="row.free" class="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-100 sm:h-5 sm:w-5 dark:bg-emerald-950/50">
+                                            <Check class="h-2.5 w-2.5 text-emerald-600 sm:h-3 sm:w-3 dark:text-emerald-400" />
+                                        </div>
+                                        <Minus v-else class="h-3.5 w-3.5 text-muted-foreground/30 sm:h-4 sm:w-4" />
+                                    </template>
+                                    <span v-else class="text-[11px] font-medium text-foreground sm:text-sm">{{ row.free }}</span>
+                                </div>
+                                <div class="flex items-center justify-center p-2.5 sm:p-4">
+                                    <template v-if="typeof row.pro === 'boolean'">
+                                        <div v-if="row.pro" class="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-100 sm:h-5 sm:w-5 dark:bg-emerald-950/50">
+                                            <Check class="h-2.5 w-2.5 text-emerald-600 sm:h-3 sm:w-3 dark:text-emerald-400" />
+                                        </div>
+                                        <Minus v-else class="h-3.5 w-3.5 text-muted-foreground/30 sm:h-4 sm:w-4" />
+                                    </template>
+                                    <span v-else class="text-[11px] font-medium text-foreground sm:text-sm">{{ row.pro }}</span>
+                                </div>
+                                <div class="flex items-center justify-center p-2.5 sm:p-4">
+                                    <template v-if="typeof row.enterprise === 'boolean'">
+                                        <div v-if="row.enterprise" class="flex h-4 w-4 items-center justify-center rounded-full bg-emerald-100 sm:h-5 sm:w-5 dark:bg-emerald-950/50">
+                                            <Check class="h-2.5 w-2.5 text-emerald-600 sm:h-3 sm:w-3 dark:text-emerald-400" />
+                                        </div>
+                                        <Minus v-else class="h-3.5 w-3.5 text-muted-foreground/30 sm:h-4 sm:w-4" />
+                                    </template>
+                                    <span v-else class="text-[11px] font-medium text-foreground sm:text-sm">{{ row.enterprise }}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
